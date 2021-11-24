@@ -111,8 +111,7 @@ char *strncat(char *s1, char *s2, size_t n) {
 char *strchr(char *s, int c) {
 	int i = 0;
 
-	while(s[i] != '\0') {
-		printf("'%c' ??? '%c'\n", s[i], c);
+	while (s[i] != '\0') {
 		if (s[i] == c) {
 			return &s[i];
 		}
@@ -123,13 +122,102 @@ char *strchr(char *s, int c) {
 
 // int strcmp (const char *__s1, const char *__s2)
 int strcmp(const char *s1, const char *s2) {
-	int i, diff = 0;
+	int i = 0;
+	int diff = 0;
 
-	while(s1[i] == s2[i]) {
+	while (s1[i] == s2[i]) {
 		i++;
 	}
 	diff = s1[i] - s2[i];
 	return diff;
+}
+
+// int strncmp (const char *__s1, const char *__s2, size_t __n)
+int strncmp(const char *s1, const char *s2, size_t n) {
+	int i = 0;
+	int diff = 0;
+
+	while (s1[i] == s2[i] && i < n) {
+		i++;
+	}
+	diff = s1[i] - s2[i];
+	return diff;
+}
+
+// size_t strcspn (const char *__s, const char *__reject)
+size_t strcspn(const char *s, const char *reject) {
+	size_t j = 0;
+	int k = 0;
+
+	while (s[j] != '\0') {
+		while (reject[k] != '\0') {
+			if (s[j] == reject[k]) {
+				return j + 1;
+			}
+			k++;
+		}
+		k = 0;
+		j++;
+	}
+
+	return j + 1;
+}
+
+// char *strpbrk (char *__s, const char *__accept)
+char *strpbrk(char *s, char *accept) {
+	int i = 0;
+	int j = 0;
+
+	while (s[i] != '\0') {
+		while (accept[j] != '\0') {
+			if (s[i] == accept[j]) {
+				return s[i];
+			}
+			j++;
+		}
+		j = 0;
+		i++;
+	}
+
+	return s[i];
+}
+
+// size_t strspn (const char *__s, const char *__accept)
+size_t strspn(const char *s, const char *accept) {
+	size_t i = 0;
+
+	while ((s[i] != '\0' || accept[i] != '\0') && (s[i] == accept[i])) {
+		i++;
+	}
+
+	return i;
+}
+
+// char *strstr (char *__haystack, const char *__needle)
+char *strstr(char *haystack, const char *needle) {
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	size_t len = strlen(needle);
+
+	while (haystack[i] != '\0') {
+		// beginning of possible matching substring
+		if (haystack[i] == needle[j]) {
+			k = i;
+			while (haystack[k] == needle[j]) {
+				k++;
+				j++;
+			}
+		}
+		if (needle[j] == '\0') {
+			return &haystack[i];
+		}
+		k = 0;
+		j = 0;
+		i++;
+	}
+	
+	return NULL;
 }
 
 int main() {
@@ -178,4 +266,30 @@ int main() {
 	printf("comparing '%s' and '%s' resulting in a diff of '%d'\n", as, as, strdiff);
 	strdiff = strcmp(bs, as);
 	printf("comparing '%s' and '%s' resulting in a diff of '%d'\n", bs, as, strdiff);
+
+	size_t strncmpChars = 2;
+	strdiff = strncmp(as, bs, strncmpChars);
+        printf("comparing '%s' and '%s' up to '%zu' chars resulting in a diff of '%d'\n", as, bs, strncmpChars, strdiff);
+	strdiff = strncmp(as, as, strncmpChars);
+        printf("comparing '%s' and '%s' up to '%zu' chars resulting in a diff of '%d'\n", as, as, strncmpChars, strdiff);
+	strdiff = strncmp(bs, as, strncmpChars);
+        printf("comparing '%s' and '%s' up to '%zu' chars resulting in a diff of '%d'\n", as, bs, strncmpChars, strdiff);
+
+	char *check = "this might contain one or more stop characters";
+	char *stopChars = "az";
+	size_t unmatched;
+
+	unmatched = strcspn(check, stopChars);
+	printf("found stop char from '%s' in '%s' and length of unmatched chars is %zu\n", stopChars, check, unmatched);
+
+	char *scanThis = "this is the main string to scan";
+	char *matchThis = "this is the second string";
+	size_t matched;
+
+	matched = strspn(scanThis, matchThis);
+	printf("'%s' matched '%s' to %zu chars\n", scanThis, matchThis, matched);
+
+	char *here = "zzzzzzzzzzzzzzrrr";
+	char *there = "rr";
+	printf("searching for first substring '%s' in '%s' and found start at '%s'\n", there, here, strstr(here, there));
 }
