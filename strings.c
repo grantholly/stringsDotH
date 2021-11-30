@@ -25,6 +25,35 @@
 */
 #include <stdio.h>
 
+// void *memcpy (void *__restrict __dest, const void *__restrict __src, size_t __n)
+void *memcpy(void *dest, const void *src, size_t n) {
+	int i;
+	char *cdest = (char *)dest;
+	const char *csrc = (char *)src;
+
+	for (i = 0; i < n; i++) {
+		cdest[i] = csrc[i];
+	}
+	return dest;
+}
+
+// void *memmove (void *__dest, const void *__src, size_t __n)
+void *memmove(void *dest, const void *src, size_t n) {
+	char *cdest = (char *)dest;
+	char *csrc = (char *)src;
+
+	if (csrc < cdest) {
+		for (cdest += n, csrc += n; n--;) {
+			*--cdest = *--csrc;
+		}
+	} else {
+		while (n--) {
+			*cdest++ = *csrc++;
+		}
+	}
+	return dest;
+}
+
 // size_t strlen (const char *__s)
 size_t strlen(const char *str) {
 	size_t len = 0;
@@ -220,7 +249,25 @@ char *strstr(char *haystack, const char *needle) {
 	return NULL;
 }
 
+// char *strtok (char *__restrict __s, const char *__restrict __delim)
+char *strtok(char *s, const char *delim) {}
+
 int main() {
+	char *myName = "grant";
+	char myBuffer[25];
+
+	memcpy(myBuffer, myName, sizeof(myName));
+	printf("%s is my name\n", myBuffer);
+
+	// move 3 bytes from *str into *str + 4
+	//                  *str + 4 ' bbb'
+	//                  |
+	//               *str 'aaa bbb'
+	//               |  |
+	char asAndBs[] = "aaa bbb";
+	memmove(asAndBs + 4, asAndBs, 3);
+	printf("moving A's over B's by moving the first 3 bytes 'aaa' over on top of b's 4 bytes over -> %s\n", asAndBs);
+
 	char *str = "grant";
 
 	printf("input -> '%s' len -> %zu\n", str, strlen(str));
