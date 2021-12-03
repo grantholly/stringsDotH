@@ -40,18 +40,38 @@ void *memcpy(void *dest, const void *src, size_t n) {
 // void *memmove (void *__dest, const void *__src, size_t __n)
 void *memmove(void *dest, const void *src, size_t n) {
 	char *cdest = (char *)dest;
-	char *csrc = (char *)src;
+	const char *csrc = (char *)src;
 
+	// not checking for overlap here so I could run the risk
+	// that `csrc` gets overwritten while trying to read from it
+	// this check only looks to see if the `csrc` starts
+	// before `cdest` starts.  they could still overlap
 	if (csrc < cdest) {
+		// start each pointer over by n
 		for (cdest += n, csrc += n; n--;) {
+			// go right
 			*--cdest = *--csrc;
 		}
 	} else {
 		while (n--) {
+			// go left
 			*cdest++ = *csrc++;
 		}
 	}
 	return dest;
+}
+
+// void *memset (void *__s, int __c, size_t __n)
+void *memset(void *src, int c, size_t n) {
+	char *csrc = (char *)src;
+
+	while (n > 0) {
+		*csrc = (char) c;
+		csrc++;
+		n--;
+	}
+
+	return src;
 }
 
 // size_t strlen (const char *__s)
@@ -267,6 +287,10 @@ int main() {
 	char asAndBs[] = "aaa bbb";
 	memmove(asAndBs + 4, asAndBs, 3);
 	printf("moving A's over B's by moving the first 3 bytes 'aaa' over on top of b's 4 bytes over -> %s\n", asAndBs);
+
+	char initial[25] = "this is original";
+	memset(initial, 'x', 4);
+	printf("memsetting 4 bytes to 'x' -> %s\n", initial);
 
 	char *str = "grant";
 
