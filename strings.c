@@ -74,6 +74,33 @@ void *memset(void *src, int c, size_t n) {
 	return src;
 }
 
+// void *memchr (void *__s, int __c, size_t __n)
+void *memchr(void *src, int c, size_t n) {
+	char *csrc = (char *)src;
+
+	while (n > 0) {
+		if (*csrc == (char)c) {
+			return csrc;
+		} else {
+			csrc++;
+			n--;
+		}
+	}
+}
+
+// int memcmp (const void *__s1, const void *__s2, size_t __n)
+int memcmp(const void *s1, const void *s2, size_t n) {
+	char *cs1 = (char *)s1;
+	char *cs2 = (char *)s2;
+	int diff = 0;
+
+	while (n > 0) {
+		diff += *cs1++ - *cs2++;
+		n--;
+	}
+	return diff;
+}
+
 // size_t strlen (const char *__s)
 size_t strlen(const char *str) {
 	size_t len = 0;
@@ -270,7 +297,9 @@ char *strstr(char *haystack, const char *needle) {
 }
 
 // char *strtok (char *__restrict __s, const char *__restrict __delim)
-char *strtok(char *s, const char *delim) {}
+char *strtok(char *s, const char *delim) {
+	// loops through s, checking each char by looping through delim
+}
 
 int main() {
 	char *myName = "grant";
@@ -291,6 +320,15 @@ int main() {
 	char initial[25] = "this is original";
 	memset(initial, 'x', 4);
 	printf("memsetting 4 bytes to 'x' -> %s\n", initial);
+
+	char addr[30] = "1234 Elm St. Madison WI";
+	char *at = memchr(addr, '.', strlen(addr));
+	printf("found '.' at %s\n", at);
+
+	char buff1[20] = "abcdABCD";
+	char buff2[10] = "abcdabcd";
+	int difference = memcmp(buff2, buff1, 10);
+	printf("%s compared to %s is %d\n", buff1, buff2, difference);
 
 	char *str = "grant";
 
